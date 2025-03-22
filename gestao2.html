@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Demandas</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --info-color: #2980b9;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .dashboard-header {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 15px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .dashboard-title {
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+            border: none;
+            transition: transform 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            font-weight: 600;
+            padding: 15px 20px;
+            border-radius: 8px 8px 0 0 !important;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            padding: 15px;
+        }
+        
+        .filter-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .stats-card {
+            text-align: center;
+            padding: 15px;
+        }
+        
+        .stats-number {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .stats-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+        }
+        
+        .stats-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .priority-high {
+            color: var(--danger-color);
+        }
+        
+        .priority-medium {
+            color: var(--warning-color);
+        }
+        
+        .priority-low {
+            color: var(--success-color);
+        }
+        
+        .status-pending {
+            color: var(--warning-color);
+        }
+        
+        .status-progress {
+            color: var(--info-color);
+        }
+        
+        .status-completed {
+            color: var(--success-color);
+        }
+        
+        .status-canceled {
+            color: var(--danger-color);
+        }
+        
+        .badge {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .badge-pending {
+            background-color: var(--warning-color);
+            color: white;
+        }
+        
+        .badge-progress {
+            background-color: var(--info-color);
+            color: white;
+        }
+        
+        .badge-completed {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .badge-canceled {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+        }
+        
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 250px;
+            }
+            .stats-number {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="dashboard-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="dashboard-title">
+                        <i class="fas fa-chart-line me-2"></i>Dashboard de Demandas
+                    </h1>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0 text-white-50">Última atualização: <span id="lastUpdate">Carregando...</span></p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Filtros -->
+        <div class="filter-section mb-4">
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="gestorFilter" class="form-label">Filtrar por Gestor:</label>
+                    <select id="gestorFilter" class="form-select">
+                        <option value="all">Todos os Gestores</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="statusFilter" class="form-label">Filtrar por Status:</label>
+                    <select id="statusFilter" class="form-select">
+                        <option value="all">Todos os Status</option>
+                        <option value="Pendente">Pendente</option>
+                        <option value="Em Andamento">Em Andamento</option>
+                        <option value="Concluído">Concluído</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="tipoFilter" class="form-label">Filtrar por Tipo:</label>
+                    <select id="tipoFilter" class="form-select">
+                        <option value="all">Todos os Tipos</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button id="applyFilters" class="btn btn-primary w-100">
+                        <i class="fas fa-filter me-2"></i>Aplicar Filtros
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cards Estatísticos -->
+        <div class="row" id="statsCards">
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="stats-icon status-pending">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stats-number" id="pendingCount">0</div>
+                    <div class="stats-label">Pendentes</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="stats-icon status-progress">
+                        <i class="fas fa-spinner"></i>
+                    </div>
+                    <div class="stats-number" id="progressCount">0</div>
+                    <div class="stats-label">Em Andamento</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="stats-icon status-completed">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stats-number" id="completedCount">0</div>
+                    <div class="stats-label">Concluídas</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="stats-icon priority-high">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stats-number" id="totalCount">0</div>
+                    <div class="stats-label">Total de Demandas</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="row">
+            <!-- Gráfico 1: Status das Demandas (Pie) -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-pie me-2"></i>Status das Demandas
+                    </div>
+                    <div class="card-body chart-container">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Gráfico 2: Demandas por Gestor (Bar) -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-bar me-2"></i>Demandas por Gestor
+                    </div>
+                    <div class="card-body chart-container">
+                        <canvas id="gestorChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Gráfico 3: Tipos de Demanda (Doughnut) -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-doughnut me-2"></i>Tipos de Demanda
+                    </div>
+                    <div class="card-body chart-container">
+                        <canvas id="tipoChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Gráfico 4: Progresso das Demandas (Bar) -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-line me-2"></i>Progresso por Responsável
+                    </div>
+                    <div class="card-body chart-container">
+                        <canvas id="progressoChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela de Demandas -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <i class="fas fa-list me-2"></i>Lista de Demandas
+            </div>
+            <div class="card-body">
+                <div id="tableLoading" class="loading">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                </div>
+                <div class="table-responsive" id="demandasTableContainer" style="display: none;">
+                    <table class="table table-striped" id="demandasTable">
+                        <thead>
+                            <tr>
+                                <th>Demanda</th>
+                                <th>Tipo</th>
+                                <th>Responsável</th>
+                                <th>Prazo</th>
+                                <th>Progresso</th>
+                                <th>Gestor</th>
+                            </tr>
+                        </thead>
+                        <tbody id="demandasTableBody">
+                            <!-- Preenchido via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // URL do Google Apps Script
+        const appScriptUrl = 'https://script.google.com/macros/s/AKfycbxh5G0c0fCsM3c_DhJTEhT-IU_NfF0KVoktvkgT0Et02XLQnnli0lJwIYlVLjPwSgOTzA/exec';
+        
+        // Variáveis globais
+        let rawData = [];
+        let filteredData = [];
+        let charts = {};
+        
+        // Cores para os gráficos
+        const chartColors = {
+            status: {
+                'Pendente': '#f39c12',
+                'Em Andamento': '#3498db',
+                'Concluído': '#27ae60',
+                'Cancelado': '#e74c3c'
+            },
+            priority: {
+                'Alta': '#e74c3c',
+                'Média': '#f39c12',
+                'Baixa': '#27ae60'
+            },
+            departamentos: [
+                '#3498db', '#e74c3c', '#2ecc71', '#f39c12', 
+                '#9b59b6', '#1abc9c', '#34495e', '#d35400'
+            ]
+        };
+        
+        // Função para carregar os dados
+        async function fetchData() {
+            try {
+                const response = await fetch(appScriptUrl);
+                const data = await response.json();
+                
+                // Processar os dados
+                processData(data);
+                
+                // Atualizar a interface
+                updateInterface();
+                
+                // Atualizar a data/hora da última atualização
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleString('pt-BR');
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao carregar os dados. Por favor, tente novamente mais tarde.');
+            }
+        }
+        
+        // Função para processar os dados recebidos
+        function processData(data) {
+            // A primeira linha contém os cabeçalhos
+            const headers = data[0];
+            
+            // Converter os dados para um formato mais fácil de usar
+            rawData = data.slice(1).map(row => {
+                return {
+                    demanda: row[0] || '',
+                    tipo: row[1] || '',
+                    responsavel: row[2] || '',
+                    prazo: row[3] || '',
+                    progresso: parseFloat(row[4]) || 0,
+                    gestor: row[5] || '',
+                    observacoes: row[6] || '',
+                    // Status calculado com base no progresso
+                    status: calcularStatus(parseFloat(row[4]) || 0)
+                };
+            });
+            
+            // Inicialmente, os dados filtrados são iguais aos dados brutos
+            filteredData = [...rawData];
+            
+            // Popular os filtros
+            popularFiltros();
+        }
+        
+        // Função para calcular o status com base no progresso
+        function calcularStatus(progresso) {
+            if (progresso >= 100) return 'Concluído';
+            if (progresso > 0) return 'Em Andamento';
+            return 'Pendente';
+        }
+        
+        // Função para popular os filtros
+        function popularFiltros() {
+            // Filtro de Gestor
+            const gestores = [...new Set(rawData.map(item => item.gestor))].filter(Boolean).sort();
+            const gestorSelect = document.getElementById('gestorFilter');
+            gestorSelect.innerHTML = '<option value="all">Todos os Gestores</option>';
+            gestores.forEach(gestor => {
+                const option = document.createElement('option');
+                option.value = gestor;
+                option.textContent = gestor;
+                gestorSelect.appendChild(option);
+            });
+            
+            // Filtro de Tipo
+            const tipos = [...new Set(rawData.map(item => item.tipo))].filter(Boolean).sort();
+            const tipoSelect = document.getElementById('tipoFilter');
+            tipoSelect.innerHTML = '<option value="all">Todos os Tipos</option>';
+            tipos.forEach(tipo => {
+                const option = document.createElement('option');
+                option.value = tipo;
+                option.textContent = tipo;
+                tipoSelect.appendChild(option);
+            });
+        }
+        
+        // Função para atualizar a interface
+        function updateInterface() {
+            // Atualizar contadores
+            updateCounters();
+            
+            // Renderizar gráficos
+            renderCharts();
+            
+            // Atualizar tabela
+            updateTable();
+        }
+        
+        // Função para atualizar os contadores
+        function updateCounters() {
+            document.getElementById('pendingCount').textContent = filteredData.filter(item => item.status === 'Pendente').length;
+            document.getElementById('progressCount').textContent = filteredData.filter(item => item.status === 'Em Andamento').length;
+            document.getElementById('completedCount').textContent = filteredData.filter(item => item.status === 'Concluído').length;
+            document.getElementById('totalCount').textContent = filteredData.length;
+        }
+        
+        // Função para renderizar todos os gráficos
+        function renderCharts() {
+            renderStatusChart();
+            renderGestorChart();
+            renderTipoChart();
+            renderProgressoChart();
+        }
+        
+        // Função para renderizar o gráfico de status
+        function renderStatusChart() {
+            const statusData = {
+                'Pendente': filteredData.filter(item => item.status === 'Pendente').length,
+                'Em Andamento': filteredData.filter(item => item.status === 'Em Andamento').length,
+                'Concluído': filteredData.filter(item => item.status === 'Concluído').length
+            };
+            
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            
+            if (charts.statusChart) {
+                charts.statusChart.destroy();
+            }
+            
+            charts.statusChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(statusData),
+                    datasets: [{
+                        data: Object.values(statusData),
+                        backgroundColor: [
+                            chartColors.status['Pendente'],
+                            chartColors.status['Em Andamento'],
+                            chartColors.status['Concluído']
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Função para renderizar o gráfico por gestor
+        function renderGestorChart() {
+            const gestorCounts = {};
+            filteredData.forEach(item => {
+                if (!gestorCounts[item.gestor]) {
+                    gestorCounts[item.gestor] = 0;
+                }
+                gestorCounts[item.gestor]++;
+            });
+            
+            const labels = Object.keys(gestorCounts);
+            const data = Object.values(gestorCounts);
+            
+            const ctx = document.getElementById('gestorChart').getContext('2d');
+            
+            if (charts.gestorChart) {
+                charts.gestorChart.destroy();
+            }
+            
+            charts.gestorChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Demandas por Gestor',
+                        data: data,
+                        backgroundColor: '#3498db',
+                        borderColor: '#2980b9',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Função para renderizar o gráfico de tipos
+        function renderTipoChart() {
+            const tipoCounts = {};
+            filteredData.forEach(item => {
+                if (!tipoCounts[item.tipo]) {
+                    tipoCounts[item.tipo] = 0;
+                }
+                tipoCounts[item.tipo]++;
+            });
+            
+            const labels = Object.keys(tipoCounts);
+            const data = Object.values(tipoCounts);
+            
+            const ctx = document.getElementById('tipoChart').getContext('2d');
+            
+            if (charts.tipoChart) {
+                charts.tipoChart.destroy();
+            }
+            
+            charts.tipoChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: chartColors.departamentos
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Função para renderizar o gráfico de progresso
+        function renderProgressoChart() {
+            // Obter média de progresso por responsável
+            const respProgressos = {};
+            const respCounts = {};
+            
+            filteredData.forEach(item => {
+                if (!respProgressos[item.responsavel]) {
+                    respProgressos[item.responsavel] = 0;
+                    respCounts[item.responsavel] = 0;
+                }
+                respProgressos[item.responsavel] += item.progresso;
+                respCounts[item.responsavel]++;
+            });
+            
+            // Calcular médias
+            const labels = Object.keys(respProgressos);
+            const data = labels.map(resp => respProgressos[resp] / respCounts[resp]);
+            
+            const ctx = document.getElementById('progressoChart').getContext('2d');
+            
+            if (charts.progressoChart) {
+                charts.progressoChart.destroy();
+            }
+            
+            charts.progressoChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Progresso Médio (%)',
+                        data: data,
+                        backgroundColor: '#27ae60',
+                        borderColor: '#2ecc71',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Função para atualizar a tabela
+        function updateTable() {
+            const tableBody = document.getElementById('demandasTableBody');
+            const tableLoading = document.getElementById('tableLoading');
+            const tableContainer = document.getElementById('demandasTableContainer');
+            
+            // Limpar a tabela
+            tableBody.innerHTML = '';
+            
+            // Mostrar indicador de carregamento
+            tableLoading.style.display = 'flex';
+            tableContainer.style.display = 'none';
+            
+            // Adicionar linhas à tabela
+            filteredData.forEach(item => {
+                const row = document.createElement('tr');
+                
+                // Demanda
+                const demandaCell = document.createElement('td');
+                demandaCell.textContent = item.demanda;
+                row.appendChild(demandaCell);
+                
+                // Tipo
+                const tipoCell = document.createElement('td');
+                tipoCell.textContent = item.tipo;
+                row.appendChild(tipoCell);
+                
+                // Responsável
+                const respCell = document.createElement('td');
+                respCell.textContent = item.responsavel;
+                row.appendChild(respCell);
+                
+                // Prazo
+                const prazoCell = document.createElement('td');
+                prazoCell.textContent = item.prazo;
+                row.appendChild(prazoCell);
+                
+                // Progresso
+                const progressoCell = document.createElement('td');
+                const progressContainer = document.createElement('div');
+                progressContainer.className = 'progress';
+                progressContainer.style.height = '10px';
+                
+                const progressBar = document.createElement('div');
+                progressBar.className = 'progress-bar';
+                progressBar.style.width = item.progresso + '%';
+                progressBar.setAttribute('aria-valuenow', item.progresso);
+                progressBar.setAttribute('aria-valuemin', '0');
+                progressBar.setAttribute('aria-valuemax', '100');
+                
+                // Cor da barra de progresso
+                if (item.progresso >= 100) {
+                    progressBar.classList.add('bg-success');
+                } else if (item.progresso > 50) {
+                    progressBar.classList.add('bg-info');
+                } else if (item.progresso > 0) {
+                    progressBar.classList.add('bg-warning');
+                } else {
+                    progressBar.classList.add('bg-danger');
+                }
+                
+                progressContainer.appendChild(progressBar);
+                progressoCell.appendChild(progressContainer);
+                
+                // Adicionar texto de porcentagem
+                const percentText = document.createElement('small');
+                percentText.textContent = item.progresso + '%';
+                percentText.className = 'd-block text-center mt-1';
+                progressoCell.appendChild(percentText);
+                
+                row.appendChild(progressoCell);
+                
+                // Gestor
+                const gestorCell = document.createElement('td');
+                gestorCell.textContent = item.gestor;
+                row.appendChild(gestorCell);
+                
+                // Adicionar a linha à tabela
+                tableBody.appendChild(row);
+            });
+            
+            // Esconder indicador de carregamento e mostrar a tabela
+            tableLoading.style.display = 'none';
+            tableContainer.style.display = 'block';
+        }
+        
+        // Função para aplicar filtros
+        function applyFilters() {
+            const gestorFilter = document.getElementById('gestorFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const tipoFilter = document.getElementById('tipoFilter').value;
+            
+            filteredData = rawData.filter(item => {
+                const gestorMatch = gestorFilter === 'all' || item.gestor === gestorFilter;
+                const statusMatch = statusFilter === 'all' || item.status === statusFilter;
+                const tipoMatch = tipoFilter === 'all' || item.tipo === tipoFilter;
+                
+                return gestorMatch && statusMatch && tipoMatch;
+            });
+            
+            updateInterface();
+        }
+        
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Carregar dados iniciais
+            fetchData();
+            
+            // Adicionar event listener para o botão de filtro
+            document.getElementById('applyFilters').addEventListener('click', applyFilters);
+        });
+    </script>
+</body>
+</html>
