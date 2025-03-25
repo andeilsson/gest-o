@@ -18,7 +18,7 @@
             --warning-color: #f39c12;
             --info-color: #2980b9;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f5f7fa;
@@ -26,7 +26,7 @@
             margin: 0;
             padding: 0;
         }
-        
+
         .dashboard-header {
             background-color: var(--secondary-color);
             color: white;
@@ -34,12 +34,12 @@
             margin-bottom: 30px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        
+
         .dashboard-title {
             font-weight: 600;
             margin: 0;
         }
-        
+
         .card {
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
@@ -47,11 +47,11 @@
             border: none;
             transition: transform 0.2s;
         }
-        
+
         .card:hover {
             transform: translateY(-5px);
         }
-        
+
         .card-header {
             background-color: white;
             border-bottom: 1px solid rgba(0,0,0,0.1);
@@ -59,13 +59,13 @@
             padding: 15px 20px;
             border-radius: 8px 8px 0 0 !important;
         }
-        
+
         .chart-container {
             position: relative;
             height: 300px;
             padding: 15px;
         }
-        
+
         .filter-section {
             background-color: white;
             border-radius: 8px;
@@ -73,98 +73,98 @@
             margin-bottom: 24px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        
+
         .stats-card {
             text-align: center;
             padding: 15px;
         }
-        
+
         .stats-number {
             font-size: 28px;
             font-weight: 700;
             margin: 10px 0;
         }
-        
+
         .stats-label {
             font-size: 14px;
             color: #7f8c8d;
             text-transform: uppercase;
         }
-        
+
         .stats-icon {
             font-size: 24px;
             margin-bottom: 10px;
         }
-        
+
         .priority-high {
             color: var(--danger-color);
         }
-        
+
         .priority-medium {
             color: var(--warning-color);
         }
-        
+
         .priority-low {
             color: var(--success-color);
         }
-        
+
         .status-pending {
             color: var(--warning-color);
         }
-        
+
         .status-progress {
             color: var(--info-color);
         }
-        
+
         .status-completed {
             color: var(--success-color);
         }
-        
+
         .status-canceled {
             color: var(--danger-color);
         }
-        
+
         .badge {
             padding: 5px 10px;
             border-radius: 4px;
             font-weight: 500;
         }
-        
+
         .badge-pending {
             background-color: var(--warning-color);
             color: white;
         }
-        
+
         .badge-progress {
             background-color: var(--info-color);
             color: white;
         }
-        
+
         .badge-completed {
             background-color: var(--success-color);
             color: white;
         }
-        
+
         .badge-canceled {
             background-color: var(--danger-color);
             color: white;
         }
-        
+
         .loading {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100px;
         }
-        
+
         .spinner-border {
             width: 3rem;
             height: 3rem;
         }
-        
+
         @media (max-width: 768px) {
             .chart-container {
-                height: 250px;
+                height: 200px;
             }
             .stats-number {
                 font-size: 24px;
@@ -264,7 +264,7 @@
         <!-- Gráficos -->
         <div class="row">
             <!-- Gráfico 1: Status das Demandas (Pie) -->
-            <div class="col-md-6">
+            <div class="col-md-6 col-sm-12">
                 <div class="card">
                     <div class="card-header">
                         <i class="fas fa-chart-pie me-2"></i>Status das Demandas
@@ -276,7 +276,7 @@
             </div>
             
             <!-- Gráfico 2: Demandas por Gestor (Bar) -->
-            <div class="col-md-6">
+            <div class="col-md-6 col-sm-12">
                 <div class="card">
                     <div class="card-header">
                         <i class="fas fa-chart-bar me-2"></i>Demandas por Gestor
@@ -290,7 +290,7 @@
 
         <div class="row">
             <!-- Gráfico 3: Tipos de Demanda (Doughnut) -->
-            <div class="col-md-6">
+            <div class="col-md-6 col-sm-12">
                 <div class="card">
                     <div class="card-header">
                         <i class="fas fa-chart-doughnut me-2"></i>Tipos de Demanda
@@ -302,13 +302,91 @@
             </div>
             
             <!-- Gráfico 4: Progresso das Demandas (Bar) -->
-            <div class="col-md-6">
+            <div class="col-md-6 col-sm-12">
                 <div class="card">
                     <div class="card-header">
                         <i class="fas fa-chart-line me-2"></i>Progresso por Responsável
                     </div>
                     <div class="card-body chart-container">
                         <canvas id="progressoChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Gráfico 5: Tendência de Demandas ao Longo do Tempo (Line) -->
+            <div class="col-md-6 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-line me-2"></i>Tendência de Demandas
+                    </div>
+                    <div class="card-body chart-container">
+                        <canvas id="tendenciaChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Gráfico 6: Distribuição de Demandas por Tipo (Bar) -->
+            <div class="col-md-6 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-bar me-2"></i>Distribuição de Demandas por Tipo
+                    </div>
+                    <div class="card-body chart-container">
+                        <canvas id="distribuicaoChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Gráfico 7: Progresso Total (Area) -->
+            <div class="col-md-6 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-area me-2"></i>Progresso Total
+                    </div>
+                    <div class="card-body chart-container">
+                        <canvas id="progressoTotalChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico 8: Demandas por Responsável (Bar) -->
+            <div class="col-md-6 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-user me-2"></i>Demandas por Responsável
+                    </div>
+                    <div class="card-body chart-container">
+                        <canvas id="responsavelChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Gráfico 9: Status de Demandas por Tipo (Stacked Bar) -->
+            <div class="col-md-6 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-bar me-2"></i>Status de Demandas por Tipo
+                    </div>
+                    <div class="card-body chart-container">
+                        <canvas id="statusTipoChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico 10: Número de Demandas por Mês (Line) -->
+            <div class="col-md-6 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-calendar-alt me-2"></i>Demandas por Mês
+                    </div>
+                    <div class="card-body chart-container">
+                        <canvas id="demandasMesChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -396,10 +474,6 @@
         
         // Função para processar os dados recebidos
         function processData(data) {
-            // A primeira linha contém os cabeçalhos
-            const headers = data[0];
-            
-            // Converter os dados para um formato mais fácil de usar
             rawData = data.slice(1).map(row => {
                 return {
                     demanda: row[0] || '',
@@ -409,28 +483,20 @@
                     progresso: parseFloat(row[4]) || 0,
                     gestor: row[5] || '',
                     observacoes: row[6] || '',
-                    // Status calculado com base no progresso
                     status: calcularStatus(parseFloat(row[4]) || 0)
                 };
             });
-            
-            // Inicialmente, os dados filtrados são iguais aos dados brutos
             filteredData = [...rawData];
-            
-            // Popular os filtros
             popularFiltros();
         }
         
-        // Função para calcular o status com base no progresso
         function calcularStatus(progresso) {
             if (progresso >= 100) return 'Concluído';
             if (progresso > 0) return 'Em Andamento';
             return 'Pendente';
         }
         
-        // Função para popular os filtros
         function popularFiltros() {
-            // Filtro de Gestor
             const gestores = [...new Set(rawData.map(item => item.gestor))].filter(Boolean).sort();
             const gestorSelect = document.getElementById('gestorFilter');
             gestorSelect.innerHTML = '<option value="all">Todos os Gestores</option>';
@@ -440,7 +506,7 @@
                 option.textContent = gestor;
                 gestorSelect.appendChild(option);
             });
-            
+
             // Filtro de Tipo
             const tipos = [...new Set(rawData.map(item => item.tipo))].filter(Boolean).sort();
             const tipoSelect = document.getElementById('tipoFilter');
@@ -453,7 +519,6 @@
             });
         }
         
-        // Função para atualizar a interface
         function updateInterface() {
             // Atualizar contadores
             updateCounters();
@@ -465,7 +530,6 @@
             updateTable();
         }
         
-        // Função para atualizar os contadores
         function updateCounters() {
             document.getElementById('pendingCount').textContent = filteredData.filter(item => item.status === 'Pendente').length;
             document.getElementById('progressCount').textContent = filteredData.filter(item => item.status === 'Em Andamento').length;
@@ -473,15 +537,19 @@
             document.getElementById('totalCount').textContent = filteredData.length;
         }
         
-        // Função para renderizar todos os gráficos
         function renderCharts() {
             renderStatusChart();
             renderGestorChart();
             renderTipoChart();
             renderProgressoChart();
+            renderTendenciaChart();
+            renderDistribuicaoChart();
+            renderProgressoTotalChart();
+            renderResponsavelChart();
+            renderStatusTipoChart();
+            renderDemandasMesChart();
         }
         
-        // Função para renderizar o gráfico de status
         function renderStatusChart() {
             const statusData = {
                 'Pendente': filteredData.filter(item => item.status === 'Pendente').length,
@@ -520,7 +588,6 @@
             });
         }
         
-        // Função para renderizar o gráfico por gestor
         function renderGestorChart() {
             const gestorCounts = {};
             filteredData.forEach(item => {
@@ -533,7 +600,7 @@
             const labels = Object.keys(gestorCounts);
             const data = Object.values(gestorCounts);
             
-           const ctx = document.getElementById('gestorChart').getContext('2d');
+            const ctx = document.getElementById('gestorChart').getContext('2d');
             
             if (charts.gestorChart) {
                 charts.gestorChart.destroy();
@@ -565,8 +632,7 @@
                 }
             });
         }
-        
-        // Função para renderizar o gráfico de tipos
+
         function renderTipoChart() {
             const tipoCounts = {};
             filteredData.forEach(item => {
@@ -605,10 +671,8 @@
                 }
             });
         }
-        
-        // Função para renderizar o gráfico de progresso
+
         function renderProgressoChart() {
-            // Obter média de progresso por responsável
             const respProgressos = {};
             const respCounts = {};
             
@@ -621,7 +685,6 @@
                 respCounts[item.responsavel]++;
             });
             
-            // Calcular médias
             const labels = Object.keys(respProgressos);
             const data = labels.map(resp => respProgressos[resp] / respCounts[resp]);
             
@@ -660,57 +723,323 @@
                 }
             });
         }
-        
-        // Função para atualizar a tabela
+
+        function renderTendenciaChart() {
+            const tendenciaData = {};
+            filteredData.forEach(item => {
+                const month = new Date(item.prazo).toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
+                if (!tendenciaData[month]) {
+                    tendenciaData[month] = 0;
+                }
+                tendenciaData[month]++;
+            });
+            
+            const labels = Object.keys(tendenciaData);
+            const data = Object.values(tendenciaData);
+            
+            const ctx = document.getElementById('tendenciaChart').getContext('2d');
+            
+            if (charts.tendenciaChart) {
+                charts.tendenciaChart.destroy();
+            }
+            
+            charts.tendenciaChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Demandas ao Longo do Tempo',
+                        data: data,
+                        borderColor: '#3498db',
+                        fill: false,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderDistribuicaoChart() {
+            const tipoCounts = {};
+            filteredData.forEach(item => {
+                if (!tipoCounts[item.tipo]) {
+                    tipoCounts[item.tipo] = 0;
+                }
+                tipoCounts[item.tipo]++;
+            });
+            
+            const labels = Object.keys(tipoCounts);
+            const data = Object.values(tipoCounts);
+            
+            const ctx = document.getElementById('distribuicaoChart').getContext('2d');
+            
+            if (charts.distribuicaoChart) {
+                charts.distribuicaoChart.destroy();
+            }
+            
+            charts.distribuicaoChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Distribuição de Demandas por Tipo',
+                        data: data,
+                        backgroundColor: '#f39c12',
+                        borderColor: '#e67e22',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderProgressoTotalChart() {
+            const progressoTotal = {};
+            filteredData.forEach(item => {
+                const month = new Date(item.prazo).toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
+                if (!progressoTotal[month]) {
+                    progressoTotal[month] = 0;
+                }
+                progressoTotal[month] += item.progresso;
+            });
+            
+            const labels = Object.keys(progressoTotal);
+            const data = Object.values(progressoTotal);
+            
+            const ctx = document.getElementById('progressoTotalChart').getContext('2d');
+            
+            if (charts.progressoTotalChart) {
+                charts.progressoTotalChart.destroy();
+            }
+            
+            charts.progressoTotalChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Progresso Total',
+                        data: data,
+                        borderColor: '#27ae60',
+                        fill: false,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderResponsavelChart() {
+            const responsavelCounts = {};
+            filteredData.forEach(item => {
+                if (!responsavelCounts[item.responsavel]) {
+                    responsavelCounts[item.responsavel] = 0;
+                }
+                responsavelCounts[item.responsavel]++;
+            });
+            
+            const labels = Object.keys(responsavelCounts);
+            const data = Object.values(responsavelCounts);
+            
+            const ctx = document.getElementById('responsavelChart').getContext('2d');
+            
+            if (charts.responsavelChart) {
+                charts.responsavelChart.destroy();
+            }
+            
+            charts.responsavelChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Demandas por Responsável',
+                        data: data,
+                        backgroundColor: '#3498db',
+                        borderColor: '#2980b9',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderStatusTipoChart() {
+            const statusTipoCounts = {};
+            filteredData.forEach(item => {
+                if (!statusTipoCounts[item.tipo]) {
+                    statusTipoCounts[item.tipo] = { Pendente: 0, 'Em Andamento': 0, Concluído: 0 };
+                }
+                statusTipoCounts[item.tipo][item.status]++;
+            });
+            
+            const labels = Object.keys(statusTipoCounts);
+            const dataPendente = labels.map(label => statusTipoCounts[label].Pendente);
+            const dataEmAndamento = labels.map(label => statusTipoCounts[label]['Em Andamento']);
+            const dataConcluido = labels.map(label => statusTipoCounts[label].Concluído);
+            
+            const ctx = document.getElementById('statusTipoChart').getContext('2d');
+            
+            if (charts.statusTipoChart) {
+                charts.statusTipoChart.destroy();
+            }
+            
+            charts.statusTipoChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Pendente',
+                            data: dataPendente,
+                            backgroundColor: '#f39c12'
+                        },
+                        {
+                            label: 'Em Andamento',
+                            data: dataEmAndamento,
+                            backgroundColor: '#3498db'
+                        },
+                        {
+                            label: 'Concluído',
+                            data: dataConcluido,
+                            backgroundColor: '#27ae60'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderDemandasMesChart() {
+            const demandasMes = {};
+            filteredData.forEach(item => {
+                const month = new Date(item.prazo).toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
+                if (!demandasMes[month]) {
+                    demandasMes[month] = 0;
+                }
+                demandasMes[month]++;
+            });
+            
+            const labels = Object.keys(demandasMes);
+            const data = Object.values(demandasMes);
+            
+            const ctx = document.getElementById('demandasMesChart').getContext('2d');
+            
+            if (charts.demandasMesChart) {
+                charts.demandasMesChart.destroy();
+            }
+            
+            charts.demandasMesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Número de Demandas por Mês',
+                        data: data,
+                        borderColor: '#2980b9',
+                        fill: false,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
         function updateTable() {
             const tableBody = document.getElementById('demandasTableBody');
             const tableLoading = document.getElementById('tableLoading');
             const tableContainer = document.getElementById('demandasTableContainer');
-            
+
             // Limpar a tabela
             tableBody.innerHTML = '';
-            
+
             // Mostrar indicador de carregamento
             tableLoading.style.display = 'flex';
             tableContainer.style.display = 'none';
-            
+
             // Adicionar linhas à tabela
             filteredData.forEach(item => {
                 const row = document.createElement('tr');
-                
+
                 // Demanda
                 const demandaCell = document.createElement('td');
                 demandaCell.textContent = item.demanda;
                 row.appendChild(demandaCell);
-                
+
                 // Tipo
                 const tipoCell = document.createElement('td');
                 tipoCell.textContent = item.tipo;
                 row.appendChild(tipoCell);
-                
+
                 // Responsável
                 const respCell = document.createElement('td');
                 respCell.textContent = item.responsavel;
                 row.appendChild(respCell);
-                
+
                 // Prazo
                 const prazoCell = document.createElement('td');
                 prazoCell.textContent = item.prazo;
                 row.appendChild(prazoCell);
-                
+
                 // Progresso
                 const progressoCell = document.createElement('td');
                 const progressContainer = document.createElement('div');
                 progressContainer.className = 'progress';
                 progressContainer.style.height = '10px';
-                
+
                 const progressBar = document.createElement('div');
                 progressBar.className = 'progress-bar';
                 progressBar.style.width = item.progresso + '%';
                 progressBar.setAttribute('aria-valuenow', item.progresso);
                 progressBar.setAttribute('aria-valuemin', '0');
                 progressBar.setAttribute('aria-valuemax', '100');
-                
+
                 // Cor da barra de progresso
                 if (item.progresso >= 100) {
                     progressBar.classList.add('bg-success');
@@ -721,49 +1050,49 @@
                 } else {
                     progressBar.classList.add('bg-danger');
                 }
-                
+
                 progressContainer.appendChild(progressBar);
                 progressoCell.appendChild(progressContainer);
-                
+
                 // Adicionar texto de porcentagem
                 const percentText = document.createElement('small');
                 percentText.textContent = item.progresso + '%';
                 percentText.className = 'd-block text-center mt-1';
                 progressoCell.appendChild(percentText);
-                
+
                 row.appendChild(progressoCell);
-                
+
                 // Gestor
                 const gestorCell = document.createElement('td');
                 gestorCell.textContent = item.gestor;
                 row.appendChild(gestorCell);
-                
+
                 // Adicionar a linha à tabela
                 tableBody.appendChild(row);
             });
-            
+
             // Esconder indicador de carregamento e mostrar a tabela
             tableLoading.style.display = 'none';
             tableContainer.style.display = 'block';
         }
-        
+
         // Função para aplicar filtros
         function applyFilters() {
             const gestorFilter = document.getElementById('gestorFilter').value;
             const statusFilter = document.getElementById('statusFilter').value;
             const tipoFilter = document.getElementById('tipoFilter').value;
-            
+
             filteredData = rawData.filter(item => {
                 const gestorMatch = gestorFilter === 'all' || item.gestor === gestorFilter;
                 const statusMatch = statusFilter === 'all' || item.status === statusFilter;
                 const tipoMatch = tipoFilter === 'all' || item.tipo === tipoFilter;
-                
+
                 return gestorMatch && statusMatch && tipoMatch;
             });
-            
+
             updateInterface();
         }
-        
+
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
             // Carregar dados iniciais
