@@ -286,7 +286,9 @@
                     </div>
                 </div>
             </div>
-            
+        </div>
+
+        <div class="row">
             <!-- Gráfico 3: Tipos de Demanda (Doughnut) -->
             <div class="col-md-6">
                 <div class="card">
@@ -531,7 +533,7 @@
             const labels = Object.keys(gestorCounts);
             const data = Object.values(gestorCounts);
             
-            const ctx = document.getElementById('gestorChart').getContext('2d');
+           const ctx = document.getElementById('gestorChart').getContext('2d');
             
             if (charts.gestorChart) {
                 charts.gestorChart.destroy();
